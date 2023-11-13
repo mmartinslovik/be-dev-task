@@ -2,15 +2,16 @@ package com.example.productmanager.rest;
 
 import com.example.productmanager.api.CreateProductDto;
 import com.example.productmanager.api.ProductDto;
+import com.example.productmanager.facade.ProductFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,6 +21,14 @@ import java.util.List;
         description = "Products API"
 )
 public class ProductController {
+
+    private final ProductFacade productFacade;
+
+    @Autowired
+    public ProductController(ProductFacade productFacade) {
+        this.productFacade = productFacade;
+    }
+
 
     @Operation(
             summary = "Fetch all Products.",
@@ -31,7 +40,7 @@ public class ProductController {
     )
     @GetMapping("/products")
     public ResponseEntity<List<ProductDto>> getAllProducts() {
-        return ResponseEntity.ok(new ArrayList<>());
+        return ResponseEntity.ok(productFacade.getAll());
     }
 
     @Operation(
@@ -52,6 +61,6 @@ public class ProductController {
     )
     @PostMapping("/products")
     public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody CreateProductDto createProductDto) {
-        return ResponseEntity.ok(new ProductDto());
+        return ResponseEntity.ok(productFacade.create(createProductDto));
     }
 }
